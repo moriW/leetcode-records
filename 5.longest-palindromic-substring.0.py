@@ -44,33 +44,51 @@
 #
 #
 #
+#
+from pprint import pprint
 
 
 # @lc code=start
 class Solution:
-    def longestPalindrome(self, s: str) -> str:
-        if not len(s) or len(s) == 1:
-            return s
-        l, r = 0, 1
-        max_len_sub_str = ""
-        current_sub_str = ""
-        while l < r and r < len(s):
-            current_sub_str = s[l:r]
-            if current_sub_str == reversed(current_sub_str):
-                max_len_sub_str = (
-                    current_sub_str
-                    if len(current_sub_str) > len(max_len_sub_str)
-                    else max_len_sub_str
-                )
-                r += 1
-            else:
-                l += 1
 
-        return current_sub_str
+    # def isPalindrome(self, sub_s: str) -> bool:
+    #
+    #     l, r = 0, len(sub_s)
+    #
+    #     if r == 1:
+    #         return True
+    #
+    #     if r == 2:
+    #         return sub_s[0] == sub_s[1]
+    #
+    #     return (sub_s[l] == sub_s[r]) and self.isPalindrome(sub_s[1 : r - 1])
+
+    def longestPalindrome(self, s: str) -> str:
+        s_len = len(s)
+        dp = [[None for _ in range(s_len)] for _ in range(s_len)]
+
+        max_len, last_max_str = 0, ""
+        for i in range(s_len):
+            max_len = 1
+            last_max_str = s[i]
+            dp[i][i] = True
+
+        for r in range(1, s_len):
+            for l in range(r - 1, -1, -1):
+                last_dp_l = min(l + 1, r - 1)
+                last_dp_r = max(r - 1, 0)
+                if dp[last_dp_l][last_dp_r] and s[l] == s[r]:
+                    dp[l][r] = True
+                    if (r + 1 - l) >= max_len:
+                        max_len = r + 1 - l
+                        last_max_str = s[l : r + 1]
+
+                else:
+                    dp[l][r] = False
+        return last_max_str
 
 
 # @lc code=end
-#
 
 
-print(Solution().longestPalindrome("babad"))
+print(Solution().longestPalindrome("abbd"))
